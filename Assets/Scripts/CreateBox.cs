@@ -5,7 +5,7 @@ using System;
 public class CreateBox : MonoBehaviour
 {
     public GameObject boxExample;   //перфаб коробки
-    public Sprite boomExample;  //перфаб(спрайт) взрыва
+    public GameObject boomExample;  //перфаб(спрайт) взрыва
 
     public float range; //радиус окружности. нужен для правильного появления коробок
 
@@ -17,13 +17,15 @@ public class CreateBox : MonoBehaviour
     bool[] boxChecked;  //прошёл ли кубик проверку(удалить его или нет). нужно для оптимизации и вращения
     int myTimer;
 
-    Sprite boomSpr;
+    GameObject boomSpr;
     public bool isBoom;
+    public int timeDelBoom;
 
 
     void Start()
     {
         isBoom = false;
+        timeDelBoom = 0;
         targets = new GameObject[countAllBoxes];
         boxChecked = new bool[countAllBoxes];
         boxState = new int[countAllBoxes];
@@ -40,7 +42,7 @@ public class CreateBox : MonoBehaviour
     void Update()
     {
         myTimer++;
-        if (myTimer >= 120)     //usualy we will create a boxes
+        if (myTimer >= 150)     //usualy we will create a boxes
         {                           //max count == countAllBoxes
             myTimer = 0;
             for (int i = 0; i< countAllBoxes; i++)            
@@ -81,7 +83,15 @@ public class CreateBox : MonoBehaviour
                 }
             }
         }
-
+        if (isBoom == true)
+        {
+            if (timeDelBoom == 0)
+            {
+                DeleteBoom();
+            }
+            timeDelBoom--;
+        }
+            
       // check =  UnityEngine.Random.Range(0, 2);
     }
 
@@ -97,12 +107,16 @@ public class CreateBox : MonoBehaviour
 
     void DeleteBox(int n)//для добавления взрыва после смерти кубика
     {
-    //    boomSpr = (Sprite)Instantiate(boomExample, targets[n].transform.position, targets[n].transform.rotation);
-        Destroy(targets[n]);        
+        boomSpr = (GameObject)Instantiate(boomExample, targets[n].transform.position, targets[n].transform.rotation);
+        boomSpr.transform.parent = GameObject.Find("Boxes").transform;
+        Destroy(targets[n]);
+        isBoom = true;
+        timeDelBoom = 40;
     }
 
     void DeleteBoom()
     {
+        isBoom = false;
         Destroy(boomSpr);
     }
 
