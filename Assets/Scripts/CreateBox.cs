@@ -17,42 +17,29 @@ public class CreateBox : MonoBehaviour
     bool[] boxChecked;  //прошёл ли кубик проверку(удалить его или нет). нужно для оптимизации и вращения
     int myTimer;
 
-    GameObject boomSpr;
-    public bool isBoom;
-    public int timeDelBoom;
-
+    GameObject[] boomSpr;       //массив взрывов    /оптимизируй меня просто спрайтом(возможно?)
+    public int[] timeDelBoom;
 
     void Start()
     {
-        isBoom = false;
-        timeDelBoom = 0;
+        timeDelBoom = new int[countAllBoxes];
         targets = new GameObject[countAllBoxes];
+        boomSpr = new GameObject[countAllBoxes];
         boxChecked = new bool[countAllBoxes];
         boxState = new int[countAllBoxes];
-        for (int i = 0; i < countAllBoxes; i++) 
+        for (int i = 0; i < countAllBoxes; i++)
         {
+            timeDelBoom[i] = 0;
             boxState[i] = 0;
             boxChecked[i] = true;
         }
-        
-        range = 1.32f;   
+
+        range = 1.32f;
         myTimer = 0;
     }
 
-    void Update()
+    void FixedUpdate()
     {
-        myTimer++;
-        if (myTimer >= 150)     //usualy we will create a boxes
-        {                           //max count == countAllBoxes
-            myTimer = 0;
-            for (int i = 0; i< countAllBoxes; i++)            
-                if (boxState[i] == 0)
-                {
-                    AddBox(i);
-                    break;
-                }      
-        }
-
         for (int i = 0; i < countAllBoxes; i++)
         {
             if (boxState[i] == 1)   //если коробка существует
@@ -63,7 +50,7 @@ public class CreateBox : MonoBehaviour
                     {
                         if (UnityEngine.Random.Range(0, 2) == 0)    //удалить или нет?
                         {
-                            boxState[i] = 0;    
+                            boxState[i] = 0;
                             DeleteBox(i);       //удаляем
                             Debug.Log("i'm out!");
                         }
@@ -83,16 +70,34 @@ public class CreateBox : MonoBehaviour
                 }
             }
         }
-        if (isBoom == true)
-        {
-            if (timeDelBoom == 0)
-            {
-                DeleteBoom();
-            }
-            timeDelBoom--;
+    }
+
+    void Update()
+    {
+        myTimer++;
+        if (myTimer >= 150)     //usualy we will create a boxes
+        {                           //max count == countAllBoxes
+            myTimer = 0;
+            for (int i = 0; i < countAllBoxes; i++)
+                if (boxState[i] == 0)
+                {
+                    AddBox(i);
+                    break;
+                }
         }
-            
-      // check =  UnityEngine.Random.Range(0, 2);
+
+        for (int i = 0; i < countAllBoxes; i++)     //проверяем на взрыв
+        {
+            if (boxState[i] == 3)
+            {
+                if (timeDelBoom[i] == 0)
+                {
+                    DeleteBoom(i);
+                }
+                timeDelBoom[i]--;
+            }
+        }
+        // check =  UnityEngine.Random.Range(0, 2);
     }
 
     void AddBox(int n)  
@@ -107,17 +112,16 @@ public class CreateBox : MonoBehaviour
 
     void DeleteBox(int n)//для добавления взрыва после смерти кубика
     {
-        boomSpr = (GameObject)Instantiate(boomExample, targets[n].transform.position, targets[n].transform.rotation);
-        boomSpr.transform.parent = GameObject.Find("Boxes").transform;
+        boomSpr[n] = (GameObject)Instantiate(boomExample, targets[n].transform.position, targets[n].transform.rotation);
+        boomSpr[n].transform.parent = GameObject.Find("Boxes").transform;
         Destroy(targets[n]);
-        isBoom = true;
-        timeDelBoom = 40;
+        boxState[n] = 3;
+        timeDelBoom[n] = 40;
     }
 
-    void DeleteBoom()
+    void DeleteBoom(int n)
     {
-        isBoom = false;
-        Destroy(boomSpr);
+        boxState[n] = 0;
+        Destroy(boomSpr[n]);
     }
-
 }
