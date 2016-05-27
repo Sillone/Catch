@@ -106,6 +106,7 @@ public class CreateBox : MonoBehaviour
         Debug.Log("new box");
         targets[n] = (GameObject) Instantiate(boxExample, new Vector2(0, range), Quaternion.identity);//создаёт кубик
         targets[n].transform.parent = GameObject.Find("Boxes").transform ;  //привязывыаем его к платформе)
+        targets[n].name = "myBox" + n.ToString();
 
 
     }

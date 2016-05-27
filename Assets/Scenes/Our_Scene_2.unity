@@ -313,6 +313,10 @@ Prefab:
       propertyPath: m_Name
       value: Ground
       objectReference: {fileID: 0}
+    - target: {fileID: 159670, guid: 2267bc8bfd8d9d045b058e1d58c1efc2, type: 2}
+      propertyPath: m_TagString
+      value: ground
+      objectReference: {fileID: 0}
     m_RemovedComponents: []
   m_ParentPrefab: {fileID: 100100000, guid: 2267bc8bfd8d9d045b058e1d58c1efc2, type: 2}
   m_IsPrefabParent: 0
@@ -379,6 +383,11 @@ Prefab:
       propertyPath: boomExample
       value: 
       objectReference: {fileID: 194034, guid: 96c7576c9a5194e48bc716b87635ba0c, type: 2}
+    - target: {fileID: 21272852, guid: e69675a2983e206478a4bc53f132071f, type: 2}
+      propertyPath: m_Sprite
+      value: 
+      objectReference: {fileID: 21300000, guid: e511f6d8bba6e1149b08366912a2e2ef,
+        type: 3}
     m_RemovedComponents: []
   m_ParentPrefab: {fileID: 100100000, guid: e69675a2983e206478a4bc53f132071f, type: 2}
   m_IsPrefabParent: 0
@@ -429,6 +438,14 @@ Prefab:
       propertyPath: groundCheck
       value: 
       objectReference: {fileID: 145081279}
+    - target: {fileID: 11437150, guid: 2f192bc6217fd554c8c30a51ca5aac26, type: 2}
+      propertyPath: jumpForce
+      value: 250
+      objectReference: {fileID: 0}
+    - target: {fileID: 21261316, guid: 2f192bc6217fd554c8c30a51ca5aac26, type: 2}
+      propertyPath: m_SortingLayerID
+      value: -1783731295
+      objectReference: {fileID: 0}
     m_RemovedComponents: []
   m_ParentPrefab: {fileID: 100100000, guid: 2f192bc6217fd554c8c30a51ca5aac26, type: 2}
   m_IsPrefabParent: 0

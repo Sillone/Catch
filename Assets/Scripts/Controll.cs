@@ -1,58 +1,45 @@
 ﻿using UnityEngine;
 using System.Collections;
 
-public class Controll : MonoBehaviour {
+public class Controll : MonoBehaviour
+{
 
     Rigidbody2D rig;
     public GameObject catGO;
     public float jumpForce = 0f;
     float posX, posY;
-    public int state;
 
-    bool facingRight = true;
+    public int level;
+
     public bool grounded = false;
     public Transform groundCheck;
-    public float groundRadius = 0.2f;
-    public LayerMask whatIsGround;
 
-    public float dist;
+    float groundRadius;
+    float boxRadius;
 
-    void Start () {
+    float distGround;
+    float[] distBox;
+
+    Animator myAnimator;
+
+    void Start()
+    {
         rig = GetComponent<Rigidbody2D>();
         posX = rig.position.x;
         posY = rig.position.y;
-        state = 0;
+        groundRadius = 0.39f;
+        boxRadius = 0.68f;
+        myAnimator = GetComponent<Animator>();
+
+        distBox = new float[5];
     }
 
-    void Update () {
-
-        /*if (state == 0)       //можно прыгать, мы не в воздухе
-        {
-            Debug.Log("can jump");
-            if (Input.touchCount > 0 && Input.GetTouch(0).phase == TouchPhase.Began)
-            {
-                rig.AddForce(new Vector3(0, jumpForce, 0));
-                state = 1;s
-            }
-
-            if (Input.GetKeyDown(KeyCode.Space))
-            {
-                rig.AddForce(new Vector3(0, jumpForce, 0));
-                state = 1;
-            }
-        }
-        else
-        {
-            Debug.Log("can't jump");
-        }*/
-        grounded = Physics2D.OverlapCircle(groundCheck.position, groundRadius, whatIsGround);
-      //  dist = Vector3.Distance(groundCheck.position, catGO.transform.position);
-        //col.GetComponent<BoxCollider2D>().tag
-      //  catGO.collider2D.GetComponent<BoxCollider2D>().tag;
-            if ((Input.touchCount > 0 && Input.GetTouch(0).phase == TouchPhase.Began) || (Input.GetKeyDown(KeyCode.Space)))
+    void Update()
+    {
+        if ((Input.touchCount > 0 && Input.GetTouch(0).phase == TouchPhase.Began) || (Input.GetKeyDown(KeyCode.Space)))
         {
             Debug.Log("you've tried(");
-            
+
             if (grounded)
             {
                 GetComponent<Rigidbody2D>().AddForce(new Vector2(0f, jumpForce));
@@ -60,8 +47,38 @@ public class Controll : MonoBehaviour {
         }
 
         if (Input.GetKey(KeyCode.Escape))
-        {   
+        {
             Application.Quit();
+        }
+
+    }
+
+    void FixedUpdate()
+    {
+        distGround = Vector2.Distance(groundCheck.position, catGO.transform.position);
+        if (distGround < groundRadius)
+        {
+
+            myAnimator.SetBool("isGround", true);
+            grounded = true;
+        }
+        else
+        {
+            grounded = false;
+            myAnimator.SetBool("isGround", false);
+            for (int i = 0; i < 5; i++)
+            {
+                if (GameObject.Find("myBox" + i))
+                {
+                    distBox[i] = Vector2.Distance(GameObject.Find("myBox" + i).transform.position, catGO.transform.position);
+                    if (distBox[i] < boxRadius && GameObject.Find("myBox" + i).transform.position.y < -0.9f)
+                    {
+                        grounded = true;
+                        myAnimator.SetBool("isGround", true);
+                        break;
+                    }
+                }
+            }
         }
 
     }
@@ -69,22 +86,11 @@ public class Controll : MonoBehaviour {
     void OnTriggerEnter2D(Collider2D col)
     {
 
-        if (col.GetComponent<BoxCollider2D>().tag == "Wall") {
-            rig.position = new Vector2(posX,0);
+        if (col.GetComponent<BoxCollider2D>().tag == "Wall")
+        {
+            rig.position = new Vector2(posX, 0);
         }
     }
-
-  /*  void OnTriggerEnter2D(Collider2D col)
-    {
-        if ((col.gameObject.name == "dieCollider") || (col.gameObject.name == "saw"))
-            Application.LoadLevel(Application.loadedLevel);
-
-
-        if (col.gameObject.name == "endLevel")
-        {
-            if (!(GameObject.Find("star"))) Application.LoadLevel("scene2");
-        }
-    }*/
 
 }
 
