@@ -4,41 +4,70 @@ using System.Collections;
 public class Controll : MonoBehaviour
 {
 
-    Rigidbody2D rig;
+    protected Rigidbody2D rig;
     public GameObject catGO;
     public float jumpForce = 0f;
-    float posX, posY;
+    protected float posX, posY;
 
     public int level;
 
-    public bool grounded = false;
+    public bool grounded = true;
     public Transform groundCheck;
 
-    float groundRadius;
-    float boxRadius;
+    protected float groundRadius;
+    protected float boxRadius;
 
-    float distGround;
-    float[] distBox;
+    protected float distGround;
+    protected float[] distBox;
 
-    Animator myAnimator;
+    protected Animator myAnimator;
 
-    void Start()
+    protected void Start()
     {
+        myAnimator = GetComponent<Animator>();
+
+        grounded = true;
+        myAnimator.SetBool("isGround", true);
+
         rig = GetComponent<Rigidbody2D>();
         posX = rig.position.x;
         posY = rig.position.y;
         groundRadius = 0.39f;
-        boxRadius = 0.68f;
-        myAnimator = GetComponent<Animator>();
+        boxRadius = 0.68f;        
 
         distBox = new float[5];
     }
-
-    void Update()
+        
+    protected virtual void Update()
     {
         if ((Input.touchCount > 0 && Input.GetTouch(0).phase == TouchPhase.Began) || (Input.GetKeyDown(KeyCode.Space)))
         {
-            Debug.Log("you've tried(");
+            ////can we fucking jump?
+            distGround = Vector2.Distance(groundCheck.position, catGO.transform.position);
+            if (distGround < groundRadius)
+            {
+
+                myAnimator.SetBool("isGround", true);
+                grounded = true;
+            }
+            else
+            {
+                grounded = false;
+                myAnimator.SetBool("isGround", false);
+                for (int i = 0; i < 5; i++)
+                {
+                    if (GameObject.Find("myBox" + i))
+                    {
+                        distBox[i] = Vector2.Distance(GameObject.Find("myBox" + i).transform.position, catGO.transform.position);
+                        if (distBox[i] < boxRadius && GameObject.Find("myBox" + i).transform.position.y < -0.9f)
+                        {
+                            grounded = true;
+                            myAnimator.SetBool("isGround", true);
+                            break;
+                        }
+                    }
+                }
+            }//now we know this
 
             if (grounded)
             {
@@ -53,37 +82,7 @@ public class Controll : MonoBehaviour
 
     }
 
-    void FixedUpdate()
-    {
-        distGround = Vector2.Distance(groundCheck.position, catGO.transform.position);
-        if (distGround < groundRadius)
-        {
-
-            myAnimator.SetBool("isGround", true);
-            grounded = true;
-        }
-        else
-        {
-            grounded = false;
-            myAnimator.SetBool("isGround", false);
-            for (int i = 0; i < 5; i++)
-            {
-                if (GameObject.Find("myBox" + i))
-                {
-                    distBox[i] = Vector2.Distance(GameObject.Find("myBox" + i).transform.position, catGO.transform.position);
-                    if (distBox[i] < boxRadius && GameObject.Find("myBox" + i).transform.position.y < -0.9f)
-                    {
-                        grounded = true;
-                        myAnimator.SetBool("isGround", true);
-                        break;
-                    }
-                }
-            }
-        }
-
-    }
-
-    void OnTriggerEnter2D(Collider2D col)
+    protected void OnTriggerEnter2D(Collider2D col)
     {
 
         if (col.GetComponent<BoxCollider2D>().tag == "Wall")

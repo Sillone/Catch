@@ -78,7 +78,9 @@
     </Reference>
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="Assets\Scripts\Box.cs" />
     <Compile Include="Assets\Scripts\CameraPixel.cs" />
+    <Compile Include="Assets\Scripts\CatLaser.cs" />
     <Compile Include="Assets\Scripts\Controll.cs" />
     <Compile Include="Assets\Scripts\CreateBox.cs" />
     <Compile Include="Assets\Scripts\JumpMaybe.cs" />

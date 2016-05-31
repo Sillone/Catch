@@ -1,6 +1,7 @@
 ﻿using UnityEngine;
 using System.Collections;
 using System;
+using System.Threading;
 
 public class CreateBox : MonoBehaviour
 {
@@ -18,7 +19,7 @@ public class CreateBox : MonoBehaviour
     int myTimer;
 
     GameObject[] boomSpr;       //массив взрывов    /оптимизируй меня просто спрайтом(возможно?)
-    public int[] timeDelBoom;
+    int[] timeDelBoom;
 
     void Start()
     {
@@ -100,15 +101,13 @@ public class CreateBox : MonoBehaviour
         // check =  UnityEngine.Random.Range(0, 2);
     }
 
-    void AddBox(int n)  
+    void AddBox(int n)
     {
         boxState[n] = 1;//для начального вращения
         Debug.Log("new box");
-        targets[n] = (GameObject) Instantiate(boxExample, new Vector2(0, range), Quaternion.identity);//создаёт кубик
-        targets[n].transform.parent = GameObject.Find("Boxes").transform ;  //привязывыаем его к платформе)
+        targets[n] = (GameObject)Instantiate(boxExample, new Vector2(0, range), Quaternion.identity);//создаёт кубик
+        targets[n].transform.parent = GameObject.Find("Boxes").transform;  //привязывыаем его к платформе)
         targets[n].name = "myBox" + n.ToString();
-
-
     }
 
     void DeleteBox(int n)//для добавления взрыва после смерти кубика
@@ -119,6 +118,7 @@ public class CreateBox : MonoBehaviour
         boxState[n] = 3;
         timeDelBoom[n] = 40;
     }
+
 
     void DeleteBoom(int n)
     {
