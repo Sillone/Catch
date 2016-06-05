@@ -1,128 +1,141 @@
 ﻿using UnityEngine;
 using System.Collections;
 using System;
-using System.Threading;
+using System.Collections.Generic;
 
 public class CreateBox : MonoBehaviour
 {
-    public GameObject boxExample;   //перфаб коробки
-    public GameObject boomExample;  //перфаб(спрайт) взрыва
+    public GameObject globalBoxExample;   //перфаб коробки
+    public GameObject globalboomExample;  //перфаб(спрайт) взрыва
 
-    public float range; //радиус окружности. нужен для правильного появления коробок
+    public float globalRange; //радиус окружности. нужен для правильного появления коробок
 
-    public float speedRotationBox;  //скорость вращения бочки в верхней-левой части экрана
+    public float startSpeedRotationBox;  //скорость вращения бочки в верхней-левой части экрана
 
-    public int countAllBoxes;       //кол-во бочек
-    GameObject[] targets;       //объекты коробки
-    int[] boxState;     //состояние коробки (0=нету, 1= есть одна, 2=есть две)
-    bool[] boxChecked;  //прошёл ли кубик проверку(удалить его или нет). нужно для оптимизации и вращения
+    public float speedRotationBox;
+
+    public int maxCountAllBoxes = 5;       //кол-во бочек
+    public int curentCout = 0;
+
     int myTimer;
+    int maxTimer;
 
-    GameObject[] boomSpr;       //массив взрывов    /оптимизируй меня просто спрайтом(возможно?)
-    int[] timeDelBoom;
+    int indexEmpty;
+   
+    public List<Box> boxes = new List<Box>();
+
+
 
     void Start()
     {
-        timeDelBoom = new int[countAllBoxes];
-        targets = new GameObject[countAllBoxes];
-        boomSpr = new GameObject[countAllBoxes];
-        boxChecked = new bool[countAllBoxes];
-        boxState = new int[countAllBoxes];
-        for (int i = 0; i < countAllBoxes; i++)
-        {
-            timeDelBoom[i] = 0;
-            boxState[i] = 0;
-            boxChecked[i] = true;
-        }
-
-        range = 1.32f;
-        myTimer = 0;
+        maxTimer = 150;
+        maxCountAllBoxes = 5;
+        curentCout = 0;
+        globalRange = 1.33f;
     }
+
+
+    void Update()
+    {
+        myTimer++;
+
+        if (myTimer >= maxTimer)     //usualy we will create a boxes
+        {                           //max count == countAllBoxes
+            myTimer = 0;
+            maxTimer = UnityEngine.Random.Range(145, 155);
+
+            //  curentCout = boxes.Count;
+            indexEmpty = boxes.FindIndex(FindEmpty);
+
+            if (indexEmpty != -1)
+            {
+                boxes.RemoveAt(indexEmpty);
+                boxes.Insert(indexEmpty, new Box());
+                boxes[indexEmpty].AddBox(globalRange, indexEmpty, globalBoxExample);
+                boxes[indexEmpty].boxState = 1;
+                Debug.Log(" changed");
+            }
+            else if (curentCout < maxCountAllBoxes)
+            {
+
+                boxes.Add(new Box());
+                boxes[curentCout].boxState = 1;
+
+                boxes[curentCout].AddBox(globalRange, curentCout, globalBoxExample);
+
+                Debug.Log(boxes[curentCout].boxState.ToString() + " pizdec");
+                curentCout++;
+            }
+
+        }
+    }
+
 
     void FixedUpdate()
     {
-        for (int i = 0; i < countAllBoxes; i++)
+        int lenArra = boxes.Count;
+        foreach (Box i in boxes) //проверяем на взрыв
         {
-            if (boxState[i] == 1)   //если коробка существует
+            if (i.boxState == 1)   //если коробка существует
             {
-                if (boxChecked[i] == false) //и она не прошла проверку(она находится слева или внизу)
+                if (i.boxChecked == false) //и она не прошла проверку(она находится слева или внизу)
                 {
-                    if (targets[i].transform.position.x > 1.2f) //и она дошла до точки справа
+                    if (i.boxGO.transform.position.x > 1.2f) //и она дошла до точки справа
                     {
                         if (UnityEngine.Random.Range(0, 2) == 0)    //удалить или нет?
                         {
-                            boxState[i] = 0;
-                            DeleteBox(i);       //удаляем
-                            Debug.Log("i'm out!");
+                            i.boxState = 0;
+                            i.DeleteBox(globalboomExample);       //удаляем
+                          //  boxes.Remove(i);
+                            //boxes.Sort(new Box.SortByState());
+
                         }
                         else
                         {
-                            boxChecked[i] = true;   //хочу вращаться 
+                            i.boxChecked = true;   //хочу вращаться 
                         }
                     }
                 }
                 else
                 {
-                    targets[i].transform.Rotate(new Vector3(0, 0, speedRotationBox) * Time.deltaTime);  //йююююху
-                    if (targets[i].transform.position.x < -1.2f)    //если она дошла до рабочей  части экрана(рядом с кошой), то стоит перестать это делать
+                    if (i.started)
+                        i.boxGO.transform.Rotate(new Vector3(0, 0, startSpeedRotationBox) * Time.deltaTime);  //йююююху
+                    else
+                        i.boxGO.transform.Rotate(new Vector3(0, 0, speedRotationBox) * Time.deltaTime);  //йююююху
+
+                    if (i.boxGO.transform.position.x < -1.2f)    //если она дошла до рабочей  части экрана(рядом с кошой), то стоит перестать это делать
                     {
-                        boxChecked[i] = false;
+                        i.boxChecked = false;
+                        if (i.started)
+                            i.started = false;
                     }
                 }
             }
-        }
-    }
-
-    void Update()
-    {
-        myTimer++;
-        if (myTimer >= 150)     //usualy we will create a boxes
-        {                           //max count == countAllBoxes
-            myTimer = 0;
-            for (int i = 0; i < countAllBoxes; i++)
-                if (boxState[i] == 0)
-                {
-                    AddBox(i);
-                    break;
-                }
-        }
-
-        for (int i = 0; i < countAllBoxes; i++)     //проверяем на взрыв
-        {
-            if (boxState[i] == 3)
+            else
             {
-                if (timeDelBoom[i] == 0)
+              /*  if (i.Booming())
                 {
-                    DeleteBoom(i);
-                }
-                timeDelBoom[i]--;
+                    boxes.Remove(i);
+                    boxes.Sort(new Box.SortByState());
+                    Debug.Log(boxes.Count.ToString() + " after delete");
+                }*/
+                i.Booming();
             }
         }
-        // check =  UnityEngine.Random.Range(0, 2);
     }
 
-    void AddBox(int n)
+    private static bool FindEmpty(Box bk)
     {
-        boxState[n] = 1;//для начального вращения
-        Debug.Log("new box");
-        targets[n] = (GameObject)Instantiate(boxExample, new Vector2(0, range), Quaternion.identity);//создаёт кубик
-        targets[n].transform.parent = GameObject.Find("Boxes").transform;  //привязывыаем его к платформе)
-        targets[n].name = "myBox" + n.ToString();
-    }
-
-    void DeleteBox(int n)//для добавления взрыва после смерти кубика
-    {
-        boomSpr[n] = (GameObject)Instantiate(boomExample, targets[n].transform.position, targets[n].transform.rotation);
-        boomSpr[n].transform.parent = GameObject.Find("Boxes").transform;
-        Destroy(targets[n]);
-        boxState[n] = 3;
-        timeDelBoom[n] = 40;
+        if (bk.boxState == 0)
+        {
+            return true;
+        }
+        else
+        {
+            return false;
+        }
     }
 
 
-    void DeleteBoom(int n)
-    {
-        boxState[n] = 0;
-        Destroy(boomSpr[n]);
-    }
+
 }
