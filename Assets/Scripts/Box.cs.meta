@@ -1,0 +1,15 @@
+fileFormatVersion: 2
+guid: e9d2d371371098242acbec6aead99431
+timeCreated: 1464720492
+licenseType: Free
+MonoImporter:
+  serializedVersion: 2
+  defaultReferences:
+  - boxExample: {fileID: 145766, guid: 6b979a3827cbba4489904ba53c7e93c7, type: 2}
+  - boxGO: {fileID: 145766, guid: 6b979a3827cbba4489904ba53c7e93c7, type: 2}
+  - boomExample: {fileID: 194034, guid: 96c7576c9a5194e48bc716b87635ba0c, type: 2}
+  executionOrder: 0
+  icon: {instanceID: 0}
+  userData: 
+  assetBundleName: 
+  assetBundleVariant: 
