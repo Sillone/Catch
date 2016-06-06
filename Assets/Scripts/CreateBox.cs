@@ -20,14 +20,16 @@ public class CreateBox : MonoBehaviour
     int myTimer;
     int maxTimer;
 
+
     int indexEmpty;
-   
+
     public List<Box> boxes = new List<Box>();
 
 
 
     void Start()
     {
+
         maxTimer = 150;
         maxCountAllBoxes = 5;
         curentCout = 0;
@@ -73,7 +75,6 @@ public class CreateBox : MonoBehaviour
 
     void FixedUpdate()
     {
-        int lenArra = boxes.Count;
         foreach (Box i in boxes) //проверяем на взрыв
         {
             if (i.boxState == 1)   //если коробка существует
@@ -84,16 +85,25 @@ public class CreateBox : MonoBehaviour
                     {
                         if (UnityEngine.Random.Range(0, 2) == 0)    //удалить или нет?
                         {
-                            i.boxState = 0;
                             i.DeleteBox(globalboomExample);       //удаляем
-                          //  boxes.Remove(i);
-                            //boxes.Sort(new Box.SortByState());
-
                         }
                         else
-                        {
                             i.boxChecked = true;   //хочу вращаться 
+                    }
+                    else                             ///for check with laser
+                    {
+                        Debug.Log("a few lasered!!");
+                        GameObject box = GameObject.Find("LASER");
+                        
+                        if (box != null)
+                        {                                                                                                                        //FIX THIS SHIT
+                            Debug.Log("i'm so fucking lasered!!");
+                            if (box.transform.position.x <= 0.4f && box.transform.position.y < -0.7f)       /////воооооот это!
+                            {
+                                i.DeleteBox(globalboomExample);
+                            }
                         }
+
                     }
                 }
                 else
@@ -112,15 +122,7 @@ public class CreateBox : MonoBehaviour
                 }
             }
             else
-            {
-              /*  if (i.Booming())
-                {
-                    boxes.Remove(i);
-                    boxes.Sort(new Box.SortByState());
-                    Debug.Log(boxes.Count.ToString() + " after delete");
-                }*/
                 i.Booming();
-            }
         }
     }
 

@@ -26,6 +26,8 @@ public class Controll : MonoBehaviour
     {
         myAnimator = GetComponent<Animator>();
 
+        catGO = GameObject.Find("cat laser");
+
         grounded = true;
         myAnimator.SetBool("isGround", true);
 
