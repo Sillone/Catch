@@ -16,6 +16,7 @@ GameObject:
   - 58: {fileID: 5865272}
   - 58: {fileID: 5841438}
   - 68: {fileID: 6825146}
+  - 114: {fileID: 11406110}
   m_Layer: 0
   m_Name: Cat
   m_TagString: Player
@@ -127,6 +128,17 @@ Animator:
   m_WarningMessage: 
   m_HasTransformHierarchy: 1
   m_AllowConstantClipSamplingOptimization: 1
+--- !u!114 &11406110
+MonoBehaviour:
+  m_ObjectHideFlags: 1
+  m_PrefabParentObject: {fileID: 0}
+  m_PrefabInternal: {fileID: 100100000}
+  m_GameObject: {fileID: 154452}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 7a892f2acb98ea44d9971db7462af613, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
 --- !u!114 &11429504
 MonoBehaviour:
   m_ObjectHideFlags: 1

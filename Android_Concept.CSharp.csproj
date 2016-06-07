@@ -84,6 +84,7 @@
     <Compile Include="Assets\Scripts\Controll.cs" />
     <Compile Include="Assets\Scripts\CreateBox.cs" />
     <Compile Include="Assets\Scripts\JumpMaybe.cs" />
+    <Compile Include="Assets\Scripts\LevelSeletcer.cs" />
     <Compile Include="Assets\Scripts\NewBehaviourScript.cs" />
     <Compile Include="Assets\Scripts\Restart.cs" />
     <Compile Include="Assets\Scripts\RollBg.cs" />

@@ -22,14 +22,34 @@ public class Controll : MonoBehaviour
 
     protected Animator myAnimator;
 
+    protected string catName;
+    protected string catStateName;
+
     protected void Start()
     {
+        if (level == 1)
+        {
+            catName = "Cat";
+            catStateName = "isGrounded";
+        }
+        else if(level == 2)
+        {
+            catName = "batCat";
+            catStateName = "batGrounded";
+        }
+        else if(level ==3)
+        {
+            catName = "cat laser";
+            catStateName = "supGrounded";
+        }
         myAnimator = GetComponent<Animator>();
 
-        catGO = GameObject.Find("cat laser");
+        catGO = GameObject.Find(catName);
+        if (catGO == null)
+            Debug.Log("pizdec nahui pidoras");
 
         grounded = true;
-        myAnimator.SetBool("isGround", true);
+        myAnimator.SetBool(catStateName, true);
 
         rig = GetComponent<Rigidbody2D>();
         posX = rig.position.x;
@@ -42,44 +62,51 @@ public class Controll : MonoBehaviour
         
     protected virtual void Update()
     {
-        if ((Input.touchCount > 0 && Input.GetTouch(0).phase == TouchPhase.Began) || (Input.GetKeyDown(KeyCode.Space)))
-        {
-            ////can we fucking jump?
-            distGround = Vector2.Distance(groundCheck.position, catGO.transform.position);
-            if (distGround < groundRadius)
-            {
+        distGround = Vector2.Distance(groundCheck.position, catGO.transform.position);
 
-                myAnimator.SetBool("isGround", true);
-                grounded = true;
-            }
-            else
+        ////can we fucking jump?            
+        if (distGround < groundRadius)
+        {
+            myAnimator.SetBool(catStateName, true);
+            grounded = true;
+            ClickJump();
+        }
+        else
+        {
+            Debug.Log("set grounded?");
+            grounded = false;
+            myAnimator.SetBool(catStateName, false);
+            for (int i = 0; i < 5; i++)
             {
-                grounded = false;
-                myAnimator.SetBool("isGround", false);
-                for (int i = 0; i < 5; i++)
+                if (GameObject.Find("myBox" + i))
                 {
-                    if (GameObject.Find("myBox" + i))
+                    distBox[i] = Vector2.Distance(GameObject.Find("myBox" + i).transform.position, catGO.transform.position);
+                    if (distBox[i] < boxRadius && GameObject.Find("myBox" + i).transform.position.y < -0.9f)
                     {
-                        distBox[i] = Vector2.Distance(GameObject.Find("myBox" + i).transform.position, catGO.transform.position);
-                        if (distBox[i] < boxRadius && GameObject.Find("myBox" + i).transform.position.y < -0.9f)
-                        {
-                            grounded = true;
-                            myAnimator.SetBool("isGround", true);
-                            break;
-                        }
+                        grounded = true;
+                        myAnimator.SetBool(catStateName, true);
+                        ClickJump();
+                        break;
                     }
                 }
-            }//now we know this
-
-            if (grounded)
-            {
-                GetComponent<Rigidbody2D>().AddForce(new Vector2(0f, jumpForce));
             }
-        }
+        }//now we know this
+
 
         if (Input.GetKey(KeyCode.Escape))
         {
             Application.Quit();
+        }
+
+    }
+
+    protected void ClickJump()
+    {
+        if ((Input.touchCount > 0 && Input.GetTouch(0).phase == TouchPhase.Began) || (Input.GetKeyDown(KeyCode.Space)))
+        {
+            GetComponent<Rigidbody2D>().AddForce(new Vector2(0f, jumpForce));
+            grounded = false;
+            myAnimator.SetBool(catStateName, false);
         }
 
     }

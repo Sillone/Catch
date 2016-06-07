@@ -11,49 +11,45 @@ public class CatLaser : Controll
     public int laserTime = 20;
     int liserTimeCurent;
 
-    public int test = 0;
-
     protected override void Update()
     {
-        if ((Input.touchCount > 0 && Input.GetTouch(0).phase == TouchPhase.Began) || (Input.GetKeyDown(KeyCode.Space)))
-        {
-            ////can we fucking jump?
-            distGround = Vector2.Distance(groundCheck.position, catGO.transform.position);
-            if (distGround < groundRadius)
-            {
+        distGround = Vector2.Distance(groundCheck.position, catGO.transform.position);
 
-                myAnimator.SetBool("isGround", true);
-                grounded = true;
-            }
-            else
+        ////can we fucking jump?            
+        if (distGround < groundRadius)
+        {
+            myAnimator.SetBool(catStateName, true);
+            grounded = true;
+            ClickJump();
+        }
+        else
+        {
+            Debug.Log("set grounded?");
+            grounded = false;
+            myAnimator.SetBool(catStateName, false);
+            for (int i = 0; i < 5; i++)
             {
-                grounded = false;
-                myAnimator.SetBool("isGround", false);
-                for (int i = 0; i < 5; i++)
+                if (GameObject.Find("myBox" + i))
                 {
-                    if (GameObject.Find("myBox" + i))
+                    distBox[i] = Vector2.Distance(GameObject.Find("myBox" + i).transform.position, catGO.transform.position);
+                    if (distBox[i] < boxRadius && GameObject.Find("myBox" + i).transform.position.y < -0.9f)
                     {
-                        distBox[i] = Vector2.Distance(GameObject.Find("myBox" + i).transform.position, catGO.transform.position);
-                        if (distBox[i] < boxRadius && GameObject.Find("myBox" + i).transform.position.y < -0.9f)
-                        {
-                            grounded = true;
-                            myAnimator.SetBool("isGround", true);
-                            break;
-                        }
+                        grounded = true;
+                        myAnimator.SetBool(catStateName, true);
+                        ClickJump();                       
+                        break;
                     }
                 }
-            }//now we know this
-
-            if (grounded)
-            {
-                GetComponent<Rigidbody2D>().AddForce(new Vector2(0f, jumpForce));
             }
-        }
+        }//now we know this
+
 
         if (Input.GetKey(KeyCode.Escape))
         {
             Application.Quit();
         }
+
+        
 
         if (Input.GetKeyDown(KeyCode.K))    ///laser
         {
@@ -63,10 +59,10 @@ public class CatLaser : Controll
                 Vector2 temp = catGO.transform.position;
                 temp.x = temp.x - 1.3f;
                 laser = (GameObject)Instantiate(exampleLaser, temp, Quaternion.identity);
-                laser.transform.parent = GameObject.Find("cat laser").transform;
+                laser.transform.parent = GameObject.Find(catName).transform;
                 liserTimeCurent = laserTime;
                 laser.name = "LASER";
-                
+
             }
         }
 
