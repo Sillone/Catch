@@ -2,7 +2,8 @@
 using System.Collections;
 using System.Collections.Generic;
 
-public class Box : MonoBehaviour {
+public class Box : MonoBehaviour
+{
 
     public int boxState; //состояние коробки (0=нету, 1= есть одна, 2=есть две)
 
@@ -11,7 +12,7 @@ public class Box : MonoBehaviour {
     public float speedRotationBox;  //скорость вращения бочки в верхней-левой части экрана
 
     public bool boxChecked;  //прошёл ли кубик проверку(удалить его или нет). нужно для оптимизации и вращения
-   
+
     GameObject boomSpr;       //массив взрывов    /оптимизируй меня просто спрайтом(возможно?)
     public int timeDelBoom;
 
@@ -28,16 +29,17 @@ public class Box : MonoBehaviour {
         boxState = 1;
     }
 
-    void Start () {
-       // boxState = 1;
+    void Start()
+    {
+        // boxState = 1;
     }
 
     // Update is called once per frame
     void Update()
     {
-     /*   Debug.Log(boxState.ToString());
-        Existing();
-        Booming();   */     
+        /*   Debug.Log(boxState.ToString());
+           Existing();
+           Booming();   */
     }
 
     public void AddBox(float range, int n, GameObject ex)
@@ -46,43 +48,44 @@ public class Box : MonoBehaviour {
         boxGO = (GameObject)Instantiate(ex, new Vector2(0, range), Quaternion.identity);//создаёт кубик
         boxGO.transform.parent = GameObject.Find("Boxes").transform;  //привязывыаем его к платформе)
         boxGO.name = "myBox" + n.ToString();
+        
     }
 
- /*   void Existing()
-    {
-        if (boxState == 1)   //если коробка существует
-        {
-            
-            if (boxChecked == false) //и она не прошла проверку(она находится слева или внизу)
-            {
-                Debug.Log(boxGO.transform.position.x.ToString());
-                if (boxGO.transform.position.x > 1.2f) //и она дошла до точки справа
-                {
-                    if (UnityEngine.Random.Range(0, 2) == 0)    //удалить или нет?
-                    {
-                        boxState = 3;
-                        DeleteBox();       //удаляем КОРОБКУ(на взрв)
-                        //boxes.Sort(new Box.SortByName());
-                        timeDelBoom = 20;
+    /*   void Existing()
+       {
+           if (boxState == 1)   //если коробка существует
+           {
 
-                    }
-                    else
-                    {
-                        boxChecked = true;   //хочу вращаться 
-                    }
-                }
-            }
-            else
-            {
-                Debug.Log("rolling?");
-                boxGO.transform.Rotate(new Vector3(0, 0, speedRotationBox) * Time.deltaTime);  //йююююху
-                if (boxGO.transform.position.x < -1.2f)    //если она дошла до рабочей  части экрана(рядом с кошой), то стоит перестать это делать
-                {
-                    boxChecked = false;
-                }
-            }
-        }
-    }*/
+               if (boxChecked == false) //и она не прошла проверку(она находится слева или внизу)
+               {
+                   Debug.Log(boxGO.transform.position.x.ToString());
+                   if (boxGO.transform.position.x > 1.2f) //и она дошла до точки справа
+                   {
+                       if (UnityEngine.Random.Range(0, 2) == 0)    //удалить или нет?
+                       {
+                           boxState = 3;
+                           DeleteBox();       //удаляем КОРОБКУ(на взрв)
+                           //boxes.Sort(new Box.SortByName());
+                           timeDelBoom = 20;
+
+                       }
+                       else
+                       {
+                           boxChecked = true;   //хочу вращаться 
+                       }
+                   }
+               }
+               else
+               {
+                   Debug.Log("rolling?");
+                   boxGO.transform.Rotate(new Vector3(0, 0, speedRotationBox) * Time.deltaTime);  //йююююху
+                   if (boxGO.transform.position.x < -1.2f)    //если она дошла до рабочей  части экрана(рядом с кошой), то стоит перестать это делать
+                   {
+                       boxChecked = false;
+                   }
+               }
+           }
+       }*/
 
     public bool Booming()
     {
@@ -95,7 +98,7 @@ public class Box : MonoBehaviour {
             }
 
             timeDelBoom--;
-        }        
+        }
         return false;
     }
 
@@ -124,6 +127,17 @@ public class Box : MonoBehaviour {
             return x.boxState.CompareTo(y.boxState);
         }
     }
+
+    /*void OnTriggerEnter2D(Collider2D col)
+    {
+
+        Debug.Log("something happened");
+        if (col.GetComponent<BoxCollider2D>().tag == "Bullet")
+        {
+            laserd = true;
+            Debug.Log("box in laser!");
+        }
+    }*/
 
 }
 

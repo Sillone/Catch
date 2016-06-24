@@ -1,11 +1,7 @@
-5.3.3f1:2.2.0.0
+5.3.5f1:2.2.0.0
 Android
 D:/programms/Unity3D/Editor/Data/Managed/UnityEngine.dll
 D:/programms/Unity3D/Editor/Data/UnityExtensions/Unity/GUISystem/UnityEngine.UI.dll
 D:/programms/Unity3D/Editor/Data/UnityExtensions/Unity/Networking/UnityEngine.Networking.dll
 D:/programms/Unity3D/Editor/Data/Managed/UnityEditor.dll
 D:/programms/Unity3D/Editor/Data\Managed/Mono.Cecil.dll
-D:\programms\Unity3D\Editor\Data\PlaybackEngines\AppleTVSupport\UnityEditor.iOS.Extensions.Xcode.dll
-D:\programms\Unity3D\Editor\Data\PlaybackEngines\AppleTVSupport\UnityEditor.iOS.Extensions.Common.dll
-D:/programms/Unity3D/Editor/Data/PlaybackEngines/iOSSupport\UnityEditor.iOS.Extensions.Xcode.dll
-D:/programms/Unity3D/Editor/Data/PlaybackEngines/iOSSupport\UnityEditor.iOS.Extensions.Common.dll

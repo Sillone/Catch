@@ -92,18 +92,12 @@ public class CreateBox : MonoBehaviour
                     }
                     else                             ///for check with laser
                     {
-                        Debug.Log("a few lasered!!");
-                        GameObject box = GameObject.Find("LASER");
-                        
-                        if (box != null)
-                        {                                                                                                                        //FIX THIS SHIT
+                        if (LaserHelper.nameOfLasered == i.boxGO.name)
+                        {
+                            LaserHelper.nameOfLasered = "null";
+                            i.DeleteBox(globalboomExample);
                             Debug.Log("i'm so fucking lasered!!");
-                            if (box.transform.position.x <= 0.4f && box.transform.position.y < -0.7f)       /////воооооот это!
-                            {
-                                i.DeleteBox(globalboomExample);
-                            }
                         }
-
                     }
                 }
                 else

@@ -11,6 +11,8 @@ GameObject:
   - 212: {fileID: 21233930}
   - 61: {fileID: 6159332}
   - 50: {fileID: 5064984}
+  - 61: {fileID: 6146306}
+  - 114: {fileID: 11457976}
   m_Layer: 0
   m_Name: PerfOurBoxSmall
   m_TagString: Wall
@@ -47,6 +49,20 @@ Rigidbody2D:
   m_SleepingMode: 1
   m_CollisionDetection: 0
   m_Constraints: 0
+--- !u!61 &6146306
+BoxCollider2D:
+  m_ObjectHideFlags: 1
+  m_PrefabParentObject: {fileID: 0}
+  m_PrefabInternal: {fileID: 100100000}
+  m_GameObject: {fileID: 145766}
+  m_Enabled: 1
+  m_Density: 1
+  m_Material: {fileID: 0}
+  m_IsTrigger: 1
+  m_UsedByEffector: 0
+  m_Offset: {x: -0.0000009536743, y: -0.0000019073486}
+  serializedVersion: 2
+  m_Size: {x: 11.750007, y: 11.750007}
 --- !u!61 &6159332
 BoxCollider2D:
   m_ObjectHideFlags: 1
@@ -61,6 +77,24 @@ BoxCollider2D:
   m_Offset: {x: -0.25952485, y: -0.10302298}
   serializedVersion: 2
   m_Size: {x: 10.854643, y: 9.526959}
+--- !u!114 &11457976
+MonoBehaviour:
+  m_ObjectHideFlags: 1
+  m_PrefabParentObject: {fileID: 0}
+  m_PrefabInternal: {fileID: 100100000}
+  m_GameObject: {fileID: 145766}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: e9d2d371371098242acbec6aead99431, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  boxState: 1
+  boxGO: {fileID: 145766}
+  speedRotationBox: 480
+  boxChecked: 1
+  timeDelBoom: 0
+  started: 1
+  laserd: 0
 --- !u!212 &21233930
 SpriteRenderer:
   m_ObjectHideFlags: 1

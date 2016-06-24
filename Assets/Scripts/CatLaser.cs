@@ -56,8 +56,9 @@ public class CatLaser : Controll
             if (!laserd)
             {
                 laserd = true;
-                Vector2 temp = catGO.transform.position;
-                temp.x = temp.x - 1.3f;
+                Vector3 temp = catGO.transform.position;
+                temp.x = temp.x - 1.21f;
+                temp.z -= 2;
                 laser = (GameObject)Instantiate(exampleLaser, temp, Quaternion.identity);
                 laser.transform.parent = GameObject.Find(catName).transform;
                 liserTimeCurent = laserTime;
@@ -65,8 +66,6 @@ public class CatLaser : Controll
 
             }
         }
-
-
     }
     
 
@@ -74,18 +73,22 @@ public class CatLaser : Controll
     {
         if (laserd)
         {
+            liserTimeCurent--;
             if (liserTimeCurent == 0)
             {
                 DeleteLaser();
             }
-            liserTimeCurent--;
+
+           /* if (liserTimeCurent > 15)
+                laser.transform.position -= new Vector3(0, 0.01f, 0);
+            else
+                laser.transform.position += new Vector3(0, 0.01f, 0);*/
         }
     }
 
     void DeleteLaser()
     {
         laserd = false;
-        Destroy(laser);
-        
+        Destroy(laser);        
     }
 }

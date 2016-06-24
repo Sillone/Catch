@@ -114,10 +114,10 @@ public class Controll : MonoBehaviour
     protected void OnTriggerEnter2D(Collider2D col)
     {
 
-        if (col.GetComponent<BoxCollider2D>().tag == "Wall")
+       /* if (col.GetComponent<BoxCollider2D>().tag == "Wall")
         {
             rig.position = new Vector2(posX, 0);
-        }
+        }*/
     }
 
 }
