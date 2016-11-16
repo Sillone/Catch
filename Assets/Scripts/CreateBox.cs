@@ -4,134 +4,58 @@ using System;
 using System.Collections.Generic;
 
 public class CreateBox : MonoBehaviour
-{
-    public GameObject globalBoxExample;   //перфаб коробки
-    public GameObject globalboomExample;  //перфаб(спрайт) взрыва
+{    
+    public int BoxesInSwawn;
 
-    public float globalRange; //радиус окружности. нужен для правильного появления коробок
+    public int MaxCountAllBoxes;
 
-    public float startSpeedRotationBox;  //скорость вращения бочки в верхней-левой части экрана
+    private float maxTimer;
+    public float IntervalCreation;
+    public float Delta;
 
-    public float speedRotationBox;
+    public GameObject globalBoxExample;
 
-    public int maxCountAllBoxes = 5;       //кол-во бочек
-    public int curentCout = 0;
-
-    int myTimer;
-    int maxTimer;
-
-
-    int indexEmpty;
-
-    public List<Box> boxes = new List<Box>();
-
-
+    public LinkedList<GameObject> ExistedBoxes;
+    void Awake ()
+    {
+        BoxesInSwawn = 0;
+    }
 
     void Start()
     {
-
-        maxTimer = 150;
-        maxCountAllBoxes = 5;
-        curentCout = 0;
-        globalRange = 1.33f;
-    }
-
-
-    void Update()
-    {
-        myTimer++;
-
-        if (myTimer >= maxTimer)     //usualy we will create a boxes
-        {                           //max count == countAllBoxes
-            myTimer = 0;
-            maxTimer = UnityEngine.Random.Range(145, 155);
-
-            //  curentCout = boxes.Count;
-            indexEmpty = boxes.FindIndex(FindEmpty);
-
-            if (indexEmpty != -1)
-            {
-                boxes.RemoveAt(indexEmpty);
-                boxes.Insert(indexEmpty, new Box());
-                boxes[indexEmpty].AddBox(globalRange, indexEmpty, globalBoxExample);
-                boxes[indexEmpty].boxState = 1;
-                Debug.Log(" changed");
-            }
-            else if (curentCout < maxCountAllBoxes)
-            {
-
-                boxes.Add(new Box());
-                boxes[curentCout].boxState = 1;
-
-                boxes[curentCout].AddBox(globalRange, curentCout, globalBoxExample);
-
-                Debug.Log(boxes[curentCout].boxState.ToString() + " pizdec");
-                curentCout++;
-            }
-
-        }
+        maxTimer = Time.time + IntervalCreation;
+        ExistedBoxes = new LinkedList<GameObject>(); 
+       // Time.timeScale = 0.5f;
     }
 
 
     void FixedUpdate()
     {
-        foreach (Box i in boxes) //проверяем на взрыв
+        if (Time.time >= maxTimer)   
         {
-            if (i.boxState == 1)   //если коробка существует
+            if (ExistedBoxes.Count < MaxCountAllBoxes)
             {
-                if (i.boxChecked == false) //и она не прошла проверку(она находится слева или внизу)
+                if (BoxesInSwawn == 0)
                 {
-                    if (i.boxGO.transform.position.x > 1.2f) //и она дошла до точки справа
-                    {
-                        if (UnityEngine.Random.Range(0, 2) == 0)    //удалить или нет?
-                        {
-                            i.DeleteBox(globalboomExample);       //удаляем
-                        }
-                        else
-                            i.boxChecked = true;   //хочу вращаться 
-                    }
-                    else                             ///for check with laser
-                    {
-                        if (LaserHelper.nameOfLasered == i.boxGO.name)
-                        {
-                            LaserHelper.nameOfLasered = "null";
-                            i.DeleteBox(globalboomExample);
-                            Debug.Log("i'm so fucking lasered!!");
-                        }
-                    }
+                    var temp = (GameObject)Instantiate(globalBoxExample);
+                    AddBox(temp);
+
+                    maxTimer = Time.time + IntervalCreation + UnityEngine.Random.Range(-Delta, Delta);
                 }
                 else
-                {
-                    if (i.started)
-                        i.boxGO.transform.Rotate(new Vector3(0, 0, startSpeedRotationBox) * Time.deltaTime);  //йююююху
-                    else
-                        i.boxGO.transform.Rotate(new Vector3(0, 0, speedRotationBox) * Time.deltaTime);  //йююююху
-
-                    if (i.boxGO.transform.position.x < -1.2f)    //если она дошла до рабочей  части экрана(рядом с кошой), то стоит перестать это делать
-                    {
-                        i.boxChecked = false;
-                        if (i.started)
-                            i.started = false;
-                    }
-                }
+                    maxTimer +=  Delta;                
             }
-            else
-                i.Booming();
+
         }
     }
 
-    private static bool FindEmpty(Box bk)
+    public void AddBox(GameObject _box)
     {
-        if (bk.boxState == 0)
-        {
-            return true;
-        }
-        else
-        {
-            return false;
-        }
+        ExistedBoxes.AddLast(_box);
     }
 
-
-
+    public void DeleteBox(GameObject _box)
+    {
+        ExistedBoxes.Remove(_box);
+    }
 }

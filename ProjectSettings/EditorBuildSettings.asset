@@ -11,3 +11,5 @@ EditorBuildSettings:
     path: Assets/Scenes/three.unity
   - enabled: 1
     path: Assets/Scenes/two.unity
+  - enabled: 1
+    path: Assets/Scenes/Menu.unity

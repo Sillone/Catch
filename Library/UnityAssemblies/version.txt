@@ -1,5 +1,5 @@
-5.3.5f1:2.2.0.0
-Android
+5.4.1f1:2.3.0.0
+StandaloneWindows
 D:/programms/Unity3D/Editor/Data/Managed/UnityEngine.dll
 D:/programms/Unity3D/Editor/Data/UnityExtensions/Unity/GUISystem/UnityEngine.UI.dll
 D:/programms/Unity3D/Editor/Data/UnityExtensions/Unity/Networking/UnityEngine.Networking.dll

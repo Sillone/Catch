@@ -4,267 +4,153 @@ using System.Collections.Generic;
 
 public class Box : MonoBehaviour
 {
+    protected int boxState; //состояние коробки (0=нету, 1= есть одна, 2=есть две)
+    protected enum _BoxStates { UnExisted, Up, Down, NeedToStop, NeedToRoll, WhatWillDo };
 
-    public int boxState; //состояние коробки (0=нету, 1= есть одна, 2=есть две)
+    protected bool spawned;
+    protected Transform trans;
 
-    public GameObject boxGO;
+    public float SpeedRotating;
 
-    public float speedRotationBox;  //скорость вращения бочки в верхней-левой части экрана
+    public float wasRotaded;
+    public GameObject globalboomExample;
 
-    public bool boxChecked;  //прошёл ли кубик проверку(удалить его или нет). нужно для оптимизации и вращения
+    public CreateBox BoxController;
 
-    GameObject boomSpr;       //массив взрывов    /оптимизируй меня просто спрайтом(возможно?)
-    public int timeDelBoom;
-
-    public bool started;
-
-    public bool laserd;
-
-    public Box()
+    protected void Awake()
     {
-        laserd = false;
-        boxChecked = true;
-        started = true;
-        speedRotationBox = 480;
+        var Boxes = GameObject.Find("Boxes");
+        BoxController= Boxes.GetComponent<CreateBox>();        
+
+        trans = transform;
+        spawned = true;
         boxState = 1;
+        var temp = GameObject.FindGameObjectWithTag("Respawn").transform;
+        trans.position = temp.position;
+        trans.rotation = temp.rotation;
+        trans.parent = Boxes.transform;
+        gameObject.name = "GamingBox";
+        BoxController.BoxesInSwawn++;
+        boxState = (int)_BoxStates.Up;
     }
 
-    void Start()
+    public void IsDouble(int role)
     {
-        // boxState = 1;
+
     }
 
-    // Update is called once per frame
-    void Update()
+
+    protected void FixedUpdate()
     {
-        /*   Debug.Log(boxState.ToString());
-           Existing();
-           Booming();   */
-    }
-
-    public void AddBox(float range, int n, GameObject ex)
-    {
-        boxState = 1;//для начального вращения
-        boxGO = (GameObject)Instantiate(ex, new Vector2(0, range), Quaternion.identity);//создаёт кубик
-        boxGO.transform.parent = GameObject.Find("Boxes").transform;  //привязывыаем его к платформе)
-        boxGO.name = "myBox" + n.ToString();
-        
-    }
-
-    /*   void Existing()
-       {
-           if (boxState == 1)   //если коробка существует
-           {
-
-               if (boxChecked == false) //и она не прошла проверку(она находится слева или внизу)
-               {
-                   Debug.Log(boxGO.transform.position.x.ToString());
-                   if (boxGO.transform.position.x > 1.2f) //и она дошла до точки справа
-                   {
-                       if (UnityEngine.Random.Range(0, 2) == 0)    //удалить или нет?
-                       {
-                           boxState = 3;
-                           DeleteBox();       //удаляем КОРОБКУ(на взрв)
-                           //boxes.Sort(new Box.SortByName());
-                           timeDelBoom = 20;
-
-                       }
-                       else
-                       {
-                           boxChecked = true;   //хочу вращаться 
-                       }
-                   }
-               }
-               else
-               {
-                   Debug.Log("rolling?");
-                   boxGO.transform.Rotate(new Vector3(0, 0, speedRotationBox) * Time.deltaTime);  //йююююху
-                   if (boxGO.transform.position.x < -1.2f)    //если она дошла до рабочей  части экрана(рядом с кошой), то стоит перестать это делать
-                   {
-                       boxChecked = false;
-                   }
-               }
-           }
-       }*/
-
-    public bool Booming()
-    {
-        if (boxState == 3)
+        if (boxState == (int)_BoxStates.WhatWillDo)
         {
-            if (timeDelBoom == 0)
+            if (UnityEngine.Random.Range(0, 2) == 0)    //удалить или нет?
+                DeleteBox();       //удаляем
+            else
+                boxState = (int)_BoxStates.Up;
+        }
+
+        if (boxState == (int)_BoxStates.Up)
+        {
+            var speed = SpeedRotating * Time.deltaTime;
+            trans.Rotate(new Vector3(0, 0, 1), speed);
+            wasRotaded += speed;
+
+            if (wasRotaded > 360)
+                wasRotaded -= 360;
+        }
+
+        if (boxState == (int)_BoxStates.NeedToStop)
+        {
+            if (wasRotaded < 360 + 90)  //90 потому что у нас платформа не правильная какая-то
             {
-                DeleteBoom();
-                return true;
+                trans.Rotate(new Vector3(0, 0, 1), SpeedRotating * Time.deltaTime);
+                wasRotaded += SpeedRotating * Time.deltaTime;
             }
-
-            timeDelBoom--;
-        }
-        return false;
-    }
-
-
-    public void DeleteBox(GameObject boom)//для добавления взрыва после смерти кубика
-    {
-        boomSpr = (GameObject)Instantiate(boom, boxGO.transform.position, boxGO.transform.rotation);
-        boomSpr.transform.parent = GameObject.Find("Boxes").transform;
-        Destroy(boxGO);
-        boxState = 3;
-        timeDelBoom = 30;
-    }
-
-
-    public void DeleteBoom()
-    {
-        boxState = 0;
-        Destroy(boomSpr);
-    }
-
-
-    public class SortByState : IComparer<Box>
-    {
-        public int Compare(Box x, Box y)
-        {
-            return x.boxState.CompareTo(y.boxState);
-        }
-    }
-
-    /*void OnTriggerEnter2D(Collider2D col)
-    {
-
-        Debug.Log("something happened");
-        if (col.GetComponent<BoxCollider2D>().tag == "Bullet")
-        {
-            laserd = true;
-            Debug.Log("box in laser!");
-        }
-    }*/
-
-}
-
-
-/*
-public class CreateBox : MonoBehaviour
-{
-    public GameObject boxExample;   //перфаб коробки
-    public GameObject boomExample;  //перфаб(спрайт) взрыва
-
-    public float range; //радиус окружности. нужен для правильного появления коробок
-
-    public float speedRotationBox;  //скорость вращения бочки в верхней-левой части экрана
-
-    public int countAllBoxes;       //кол-во бочек
-    GameObject[] targets;       //объекты коробки
-    int[] boxState;     //состояние коробки (0=нету, 1= есть одна, 2=есть две)
-    bool[] boxChecked;  //прошёл ли кубик проверку(удалить его или нет). нужно для оптимизации и вращения
-    int myTimer;
-
-    GameObject[] boomSpr;       //массив взрывов    /оптимизируй меня просто спрайтом(возможно?)
-    int[] timeDelBoom;
-
-    void Start()
-    {
-        timeDelBoom = new int[countAllBoxes];
-        targets = new GameObject[countAllBoxes];
-        boomSpr = new GameObject[countAllBoxes];
-        boxChecked = new bool[countAllBoxes];
-        boxState = new int[countAllBoxes];
-        for (int i = 0; i < countAllBoxes; i++)
-        {
-            timeDelBoom[i] = 0;
-            boxState[i] = 0;
-            boxChecked[i] = true;
-        }
-
-        range = 1.32f;
-        myTimer = 0;
-    }
-
-    void FixedUpdate()
-    {
-        for (int i = 0; i < countAllBoxes; i++)
-        {
-            if (boxState[i] == 1)   //если коробка существует
+            else
             {
-                if (boxChecked[i] == false) //и она не прошла проверку(она находится слева или внизу)
-                {
-                    if (targets[i].transform.position.x > 1.2f) //и она дошла до точки справа
-                    {
-                        if (UnityEngine.Random.Range(0, 2) == 0)    //удалить или нет?
-                        {
-                            boxState[i] = 0;
-                            DeleteBox(i);       //удаляем
-                            Debug.Log("i'm out!");
-                        }
-                        else
-                        {
-                            boxChecked[i] = true;   //хочу вращаться 
-                        }
-                    }
-                }
-                else
-                {
-                    targets[i].transform.Rotate(new Vector3(0, 0, speedRotationBox) * Time.deltaTime);  //йююююху
-                    if (targets[i].transform.position.x < -1.2f)    //если она дошла до рабочей  части экрана(рядом с кошой), то стоит перестать это делать
-                    {
-                        boxChecked[i] = false;
-                    }
-                }
+                trans.Rotate(new Vector3(0, 0, 1), -wasRotaded + 360 + 90);
+                boxState = (int)_BoxStates.Down;
+                // wasRotaded = 0;
             }
         }
     }
 
-    void Update()
+    public void DeleteBox()
     {
-        myTimer++;
-        if (myTimer >= 150)     //usualy we will create a boxes
-        {                           //max count == countAllBoxes
-            myTimer = 0;
-            for (int i = 0; i < countAllBoxes; i++)
-                if (boxState[i] == 0)
+        var boxes = GameObject.Find("Boxes");
+
+        BoxController.DeleteBox(gameObject);
+        boxState = (int)_BoxStates.UnExisted;
+
+        var boomSpr = (GameObject)Instantiate(globalboomExample, transform.position, transform.rotation);
+        boomSpr.transform.parent = boxes.transform;
+        Destroy(gameObject);
+    }
+
+    void OnTriggerExit2D(Collider2D col)
+    {
+        if (col.GetComponent<CircleCollider2D>())
+
+            if (col.GetComponent<CircleCollider2D>().tag == "Respawn")
+            {
+                if (spawned)
                 {
-                    AddBox(i);
+                    spawned = !spawned;
+                    BoxController.BoxesInSwawn--;
+                }
+            }
+    }
+
+    void OnTriggerEnter2D(Collider2D col)
+    {
+        if (col.GetComponent<BoxCollider2D>())
+        {
+            switch (col.GetComponent<BoxCollider2D>().tag)
+            {
+                case "Respawn":
+                    {
+                        if (!spawned)
+                        {
+                            spawned = !spawned;
+                            BoxController.BoxesInSwawn++;
+                        }
+                        break;
+                    }
+
+                case "Player":
+                    {
+                        Debug.Log("box in cat?");
+                        break;
+                    }
+                case "Finish":
+                    {
+                        if (boxState == (int)_BoxStates.Up)
+                            boxState = (int)_BoxStates.NeedToStop;
+                        break;
+                    }
+                case "Deleter":
+                    {
+                        if (boxState == (int)_BoxStates.Down)
+                            boxState = (int)_BoxStates.WhatWillDo;
+                        break;
+                    }
+                case "Bullet":
+                    {
+                        DeleteBox();
+                        break;
+                    }
+                default:
                     break;
-                }
-        }
-
-        for (int i = 0; i < countAllBoxes; i++)     //проверяем на взрыв
-        {
-            if (boxState[i] == 3)
-            {
-                if (timeDelBoom[i] == 0)
-                {
-                    DeleteBoom(i);
-                }
-                timeDelBoom[i]--;
             }
         }
-        // check =  UnityEngine.Random.Range(0, 2);
-    }
 
-    void AddBox(int n)
-    {
-        boxState[n] = 1;//для начального вращения
-        Debug.Log("new box");
-        targets[n] = (GameObject)Instantiate(boxExample, new Vector2(0, range), Quaternion.identity);//создаёт кубик
-        targets[n].transform.parent = GameObject.Find("Boxes").transform;  //привязывыаем его к платформе)
-        targets[n].name = "myBox" + n.ToString();
-    }
-
-    void DeleteBox(int n)//для добавления взрыва после смерти кубика
-    {
-        boomSpr[n] = (GameObject)Instantiate(boomExample, targets[n].transform.position, targets[n].transform.rotation);
-        boomSpr[n].transform.parent = GameObject.Find("Boxes").transform;
-        Destroy(targets[n]);
-        boxState[n] = 3;
-        timeDelBoom[n] = 40;
-    }
-
-
-    void DeleteBoom(int n)
-    {
-        boxState[n] = 0;
-        Destroy(boomSpr[n]);
+        if (col.GetComponent<CircleCollider2D>())
+        {
+            if (col.GetComponent<CircleCollider2D>().tag == "Player")
+            {
+                col.GetComponent<Controll>().KillCat();
+            }
+        }
     }
 }
-
-*/

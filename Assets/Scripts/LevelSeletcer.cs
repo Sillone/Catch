@@ -24,5 +24,10 @@ public class LevelSeletcer : MonoBehaviour {
         {
             Application.LoadLevel("three");
         }
+
+        if (Input.GetKey(KeyCode.Escape))
+        {
+            Application.Quit();
+        }
     }
 }
