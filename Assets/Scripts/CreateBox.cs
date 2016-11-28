@@ -25,6 +25,7 @@ public class CreateBox : MonoBehaviour
     {
         maxTimer = Time.time + IntervalCreation;
         ExistedBoxes = new LinkedList<GameObject>(); 
+    //    var temp = GameObject.Find("GamingBox").GetComponent<Box>().
        // Time.timeScale = 0.5f;
     }
 

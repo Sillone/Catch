@@ -3,17 +3,16 @@ using System.Collections;
 
 public class Controll : MonoBehaviour
 {
+    public int HP;
+
     public float jumpForce;
 
     public int level;
-
-    public bool grounded;
+    
     public Transform groundCheck;
 
     private float groundRadius;
     private float boxRadius;
-
-    private float distGround;
 
     private Animator myAnimator;
 
@@ -23,77 +22,94 @@ public class Controll : MonoBehaviour
 
     private Rigidbody2D RigBody;
 
+    private Transform trans;
+
+    private CreateBox _CreateBox;
+
     void Start()
     {
+        HP = 1;
+        trans = transform;
         RigBody = GetComponent<Rigidbody2D>();
         Boxes = GameObject.Find("Boxes");
-        if (level == 1)
+
+        switch (level)
         {
-            catStateName = "isGrounded";
+            case 1:
+                {
+                    catStateName = "isGrounded";
+                    break;
+                }
+            case 2:
+                {
+                    catStateName = "batGrounded";
+                    break;
+                }
+            case 3:
+                {
+                    catStateName = "supGrounded";
+                    break;
+                }
+            default:
+                catStateName = "UnKnownCat";
+                break;
         }
-        else if(level == 2)
-        {
-            catStateName = "batGrounded";
-        }
-        else if(level ==3)
-        {
-            catStateName = "supGrounded";
-        }
+
         myAnimator = GetComponent<Animator>();
 
-        grounded = true;
         myAnimator.SetBool(catStateName, true);
 
         groundRadius = 0.39f;
-        boxRadius = 0.68f;        
+        boxRadius = 0.68f;
+        _CreateBox = Boxes.GetComponent<CreateBox>();        
     }
 
-    private void CheckGrounded()
+    private bool CheckGrounded()
     {
-        distGround = Vector2.Distance(groundCheck.position, gameObject.transform.position);
+        float distGround = Vector2.Distance(groundCheck.position, trans.position);
 
         if (distGround < groundRadius)
         {
             myAnimator.SetBool(catStateName, true);
-            grounded = true;
-            ClickJump();
+            return true;
         }
         else
         {
-            grounded = false;
-            myAnimator.SetBool(catStateName, false);
-
-            foreach (var box in Boxes.GetComponent<CreateBox>().ExistedBoxes)
+            foreach (var box in _CreateBox.ExistedBoxes)
             {
-                float distBox = Vector2.Distance(box.transform.position, gameObject.transform.position);
-                if (distBox < boxRadius && box.transform.position.y < -0.9f)
+                float distBox = Vector2.Distance(box.transform.position, trans.position);
+                if (box.transform.position.y < -0.9f && distBox < boxRadius)
                 {
-                    grounded = true;
                     myAnimator.SetBool(catStateName, true);
-                    ClickJump();
-                    break;
+                    return true;
                 }
+
             }
+            myAnimator.SetBool(catStateName, false);
+            return false;
         }
     }
 
     void Update()
     {
-        CheckGrounded();
+        ClickJump();
     }
 
     private void ClickJump()
     {
         if ((Input.touchCount > 0 && Input.GetTouch(0).phase == TouchPhase.Began) || (Input.GetKeyDown(KeyCode.Space)))
         {
-            RigBody.AddForce(new Vector2(0f, jumpForce));
-            grounded = false;
-            myAnimator.SetBool(catStateName, false);
+            if (CheckGrounded())
+            {
+                RigBody.AddForce(new Vector2(0f, jumpForce));
+                myAnimator.SetBool(catStateName, false);
+            }
         }
     }
 
     public void KillCat()
     {
+        HP--;
         print("cat is dying! OMG! Sasha, cho delat'?");
     }
 }

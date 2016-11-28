@@ -7,18 +7,28 @@ public class Box : MonoBehaviour
     protected int boxState; //состояние коробки (0=нету, 1= есть одна, 2=есть две)
     protected enum _BoxStates { UnExisted, Up, Down, NeedToStop, NeedToRoll, WhatWillDo };
 
+    public int CountForienBoxes;//1=1 box; 2= 2 boxes; 3 = many boxes;
+
     protected bool spawned;
     protected Transform trans;
 
     public float SpeedRotating;
 
-    public float wasRotaded;
+    protected float wasRotaded;
     public GameObject globalboomExample;
 
     public CreateBox BoxController;
 
-    protected void Awake()
+    public Transform[] TransOfForien= new Transform[3];
+
+    public GameObject EmptyBox;
+
+    public LinkedList<GameObject> ForienBox;
+
+    protected virtual void Awake()
     {
+        ForienBox = new LinkedList<GameObject>();
+
         var Boxes = GameObject.Find("Boxes");
         BoxController= Boxes.GetComponent<CreateBox>();        
 
@@ -32,22 +42,30 @@ public class Box : MonoBehaviour
         gameObject.name = "GamingBox";
         BoxController.BoxesInSwawn++;
         boxState = (int)_BoxStates.Up;
+
+        CountForienBoxes = UnityEngine.Random.Range(0, 3);
     }
 
-    public void IsDouble(int role)
-    {
-
-    }
-
-
-    protected void FixedUpdate()
+    protected virtual void FixedUpdate()
     {
         if (boxState == (int)_BoxStates.WhatWillDo)
         {
+            if (CountForienBoxes > 0)
+            {
+                foreach (var i in ForienBox)
+                {
+                    if (i != null)
+                        Destroy(i);
+                }
+                ForienBox.Clear();
+            }
+
             if (UnityEngine.Random.Range(0, 2) == 0)    //удалить или нет?
                 DeleteBox();       //удаляем
             else
+            { 
                 boxState = (int)_BoxStates.Up;
+            }
         }
 
         if (boxState == (int)_BoxStates.Up)
@@ -71,12 +89,22 @@ public class Box : MonoBehaviour
             {
                 trans.Rotate(new Vector3(0, 0, 1), -wasRotaded + 360 + 90);
                 boxState = (int)_BoxStates.Down;
+
+                if (CountForienBoxes > 0)
+                {
+                    for (int i = 0; i < CountForienBoxes; i++)
+                    {
+                        var temp = (GameObject)Instantiate(EmptyBox, TransOfForien[i].position, TransOfForien[i].rotation);
+                        ForienBox.AddLast(temp);
+                        temp.transform.parent = trans;
+                    }
+                }
                 // wasRotaded = 0;
             }
         }
     }
 
-    public void DeleteBox()
+    public virtual void DeleteBox()
     {
         var boxes = GameObject.Find("Boxes");
 
@@ -88,7 +116,7 @@ public class Box : MonoBehaviour
         Destroy(gameObject);
     }
 
-    void OnTriggerExit2D(Collider2D col)
+    protected void OnTriggerExit2D(Collider2D col)
     {
         if (col.GetComponent<CircleCollider2D>())
 
@@ -102,7 +130,7 @@ public class Box : MonoBehaviour
             }
     }
 
-    void OnTriggerEnter2D(Collider2D col)
+    protected virtual void OnTriggerEnter2D(Collider2D col)
     {
         if (col.GetComponent<BoxCollider2D>())
         {
@@ -149,6 +177,7 @@ public class Box : MonoBehaviour
         {
             if (col.GetComponent<CircleCollider2D>().tag == "Player")
             {
+                DeleteBox();
                 col.GetComponent<Controll>().KillCat();
             }
         }

@@ -188,7 +188,7 @@ Prefab:
     - target: {fileID: 114000011831294488, guid: 6a77aa285740a33468041addfd43c814,
         type: 2}
       propertyPath: jumpForce
-      value: 250
+      value: 220
       objectReference: {fileID: 0}
     - target: {fileID: 114000011831294488, guid: 6a77aa285740a33468041addfd43c814,
         type: 2}
@@ -388,6 +388,12 @@ Prefab:
       propertyPath: m_RootOrder
       value: 2
       objectReference: {fileID: 0}
+    - target: {fileID: 114000010068674190, guid: e69675a2983e206478a4bc53f132071f,
+        type: 2}
+      propertyPath: globalBoxExample
+      value: 
+      objectReference: {fileID: 1000010066952142, guid: 6b979a3827cbba4489904ba53c7e93c7,
+        type: 2}
     m_RemovedComponents: []
   m_ParentPrefab: {fileID: 100100000, guid: e69675a2983e206478a4bc53f132071f, type: 2}
   m_IsPrefabParent: 0

@@ -129,6 +129,12 @@ Prefab:
       propertyPath: m_RootOrder
       value: 2
       objectReference: {fileID: 0}
+    - target: {fileID: 114000010068674190, guid: e69675a2983e206478a4bc53f132071f,
+        type: 2}
+      propertyPath: globalBoxExample
+      value: 
+      objectReference: {fileID: 1000010066952142, guid: 6b979a3827cbba4489904ba53c7e93c7,
+        type: 2}
     m_RemovedComponents: []
   m_ParentPrefab: {fileID: 100100000, guid: e69675a2983e206478a4bc53f132071f, type: 2}
   m_IsPrefabParent: 0
@@ -380,6 +386,11 @@ Prefab:
       propertyPath: groundCheck
       value: 
       objectReference: {fileID: 1479278067}
+    - target: {fileID: 114000010671685312, guid: 1aab0bea954dc2d45aa5b7d220e7b783,
+        type: 2}
+      propertyPath: jumpForce
+      value: 220
+      objectReference: {fileID: 0}
     m_RemovedComponents: []
   m_ParentPrefab: {fileID: 100100000, guid: 1aab0bea954dc2d45aa5b7d220e7b783, type: 2}
   m_IsPrefabParent: 0
